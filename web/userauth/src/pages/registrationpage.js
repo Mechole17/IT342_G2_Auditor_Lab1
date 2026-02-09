@@ -1,11 +1,10 @@
 import { useState } from "react";
 import axios from "axios";
 
-
 export default function RegistrationPage() {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    firstname: "",
+    lastname: "",
     email: "",
     password: "",
     confirmPassword: ""
@@ -13,124 +12,110 @@ export default function RegistrationPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit =  async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
+    if (!passwordRegex.test(formData.password)) {
+      alert("Password must be at least 8 characters long and include both letters and numbers.");
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
+      setFormData(prev => ({ ...prev, password: "", confirmPassword: "" }));
       alert("Passwords do not match!");
       return;
     }
-    console.log("Registration Data:", formData);
 
     try {
-            const response = await axios.post("http://localhost:8081/api/user/auth/register", formData);
-            alert("Registration Successful! Please login.");
-            console.log(response)
-        } catch (error) {
-            console.error("Error registering user:", error);
-            if (error.response && error.response.data) {
-                alert("error")
-            } else {
-                alert("Registration failed! Is the backend running?");
-            }
-        } 
+      const response = await axios.post("http://localhost:8081/api/user/auth/register", formData);
+      alert("Registration Successful!");
+      console.log(response);
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.response?.data?.error || "Email already used.";
+      alert(errorMessage);
+    }
   };
 
   return (
-    <div style={styles.container}>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <h2>Create Account</h2>
+    <div style={styles.page}>
+      <div style={styles.card}>
+        <h1 style={styles.title}>Create Account</h1>
+        <p style={styles.subtitle}>Join us by filling out the details below</p>
         
-        <input
-          type="text"
-          name="firstName"
-          placeholder="First Name"
-          value={formData.firstName}
-          onChange={handleChange}
-          required
-          style={styles.input}
-        />
-        
-        <input
-          type="text"
-          name="lastName"
-          placeholder="Last Name"
-          value={formData.lastName}
-          onChange={handleChange}
-          required
-          style={styles.input}
-        />
+        <form onSubmit={handleSubmit} style={styles.form}>
+          <div style={styles.row}>
+            <input type="text" name="firstname" placeholder="First Name" value={formData.firstname} onChange={handleChange} required style={styles.input} />
+            <input type="text" name="lastname" placeholder="Last Name" value={formData.lastname} onChange={handleChange} required style={styles.input} />
+          </div>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          style={styles.input}
-        />
+          <input type="email" name="email" placeholder="Email Address" value={formData.email} onChange={handleChange} required style={styles.input} />
+          <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required style={styles.input} />
+          <input type="password" name="confirmPassword" placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleChange} required style={styles.input} />
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-          style={styles.input}
-        />
-
-        <input
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm Password"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          required
-          style={styles.input}
-        />
-
-        <button type="submit" style={styles.button}>Register</button>
-      </form>
+          <button type="submit" style={styles.button}>Register</button>
+        </form>
+      </div>
     </div>
   );
 }
 
 const styles = {
-  container: {
+  page: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    height: "100vh",
-    backgroundColor: "#f4f4f4"
+    minHeight: "100vh",
+    fontFamily: "'Inter', system-ui, sans-serif",
+    backgroundColor: "#ffffff"
+  },
+  card: {
+    width: "100%",
+    maxWidth: "400px",
+    padding: "40px",
+    textAlign: "center"
+  },
+  title: {
+    fontSize: "24px",
+    fontWeight: "700",
+    margin: "0 0 8px 0",
+    color: "#1a1a1a"
+  },
+  subtitle: {
+    fontSize: "14px",
+    color: "#666",
+    marginBottom: "32px"
   },
   form: {
     display: "flex",
     flexDirection: "column",
-    padding: "20px",
-    borderRadius: "8px",
-    backgroundColor: "#fff",
-    boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-    width: "300px"
+    gap: "16px"
+  },
+  row: {
+    display: "flex",
+    gap: "12px"
   },
   input: {
-    marginBottom: "10px",
-    padding: "10px",
-    borderRadius: "4px",
-    border: "1px solid #ccc"
+    width: "100%",
+    padding: "12px 16px",
+    borderRadius: "8px",
+    border: "1px solid #e0e0e0",
+    fontSize: "14px",
+    outline: "none",
+    boxSizing: "border-box"
   },
   button: {
-    padding: "10px",
-    backgroundColor: "#007bff",
-    color: "white",
+    marginTop: "8px",
+    padding: "12px",
+    backgroundColor: "#000",
+    color: "#fff",
     border: "none",
-    borderRadius: "4px",
+    borderRadius: "8px",
+    fontSize: "16px",
+    fontWeight: "600",
     cursor: "pointer"
   }
 };
