@@ -1,22 +1,10 @@
 ## TASK CHECKLIST
+    #Done
 
-Features:
-    Login - TODO
-    Register - TODO
-    Dashboard - TODO
-    Profile - TODO
-    Logout - TODO
+    #In-progress
+    - Register
 
-Backend:
-    AuthController - TODO
-    AuthServices - TODO
-    User - DONE
-    PasswordConfig - TODO
-    DTOs - TODO
-
-Frontend:
-    Login page - TODO
-    Register page - TODO
-    Dashboard page - TODO
-    Profile page - TODO
-    Logout button - TODO
+    #TODO
+    -Login
+    -Logout
+    -Dashboard /Profile
