@@ -14,25 +14,24 @@ export default function LandingPage() {
   };
 
   const handleLogin = async (e) => {
-    e.preventDefault();
+      e.preventDefault();
 
-    try {
-      // Use the same port/URL pattern as your registration
-      const response = await axios.post("http://localhost:8081/api/user/auth/login", loginData);
-      
-      // 1. Save the user to LocalStorage using authcontext login function
-      login(response.data); 
-      alert("Login Successful!");
-      navigate("/dashboard"); // Or wherever your main page is
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || "Invalid email or password.";
-      alert(errorMessage);
-      
-      // Clear password on failure
-      setLoginData(prev => ({ ...prev, password: "" }));
-    }
+      try {
+        const response = await axios.post("http://localhost:8081/api/auth/login", loginData);
+        
+        // FIX 1: Pass only the token string to the login function
+        // FIX 2: Use 'await' so the dashboard doesn't load empty
+        await login(response.data.token); 
+
+        alert("Login Successful!");
+        navigate("/dashboard"); 
+      } catch (error) {
+        const errorMessage = error.response?.data?.message || "Invalid email or password.";
+        alert(errorMessage);
+        setLoginData(prev => ({ ...prev, password: "" }));
+      }
   };
-
+  
   return (
     <div style={styles.page}>
       {/* Left Side: Hero Section */}
