@@ -1,10 +1,12 @@
 ## TASK CHECKLIST
     #Done
-
-    #In-progress
-    - Register
-
-    #TODO
+    -Register
     -Login
     -Logout
-    -Dashboard /Profile
+    -Dashboard/Profile
+
+    #In-progress
+
+
+    #TODO
+    
