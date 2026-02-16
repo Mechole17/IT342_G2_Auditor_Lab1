@@ -1,22 +1,42 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
+  const { user, logout, loading } = useContext(AuthContext);
 
   const handleLogout = () => {
-    // 1. Clear local storage/session (if you have tokens)
-    localStorage.removeItem("token");
-    // 2. Redirect to landing page
+    logout();
     navigate("/");
   };
+
+  if (loading) return null; // Wait for storage check
+  if (!user) {
+    return (
+      <div style={styles.unauthorizedContainer}>
+        <div style={styles.unauthorizedCard}>
+          <h2 style={styles.unauthorizedTitle}>Access Denied</h2>
+          <p style={styles.unauthorizedText}>
+            You need to be logged in to view your audit dashboard.
+          </p>
+          <button 
+            onClick={() => navigate("/")} 
+            style={styles.unauthorizedButton}
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={styles.container}>
       {/* Sidebar */}
       <aside style={styles.sidebar}>
-        <div style={styles.logo}>AUDITOR AI</div>
+        <div style={styles.logo}>USER AUTH</div>
         
         <nav style={styles.nav}>
           <button 
@@ -49,14 +69,38 @@ export default function Dashboard() {
         <section style={styles.contentBody}>
           {activeTab === "overview" ? (
             <div style={styles.card}>
-              <h3>Welcome back!</h3>
+              <h3>Welcome back, {user.firstname}!</h3>
               <p>Here is an overview of your recent audit activities.</p>
             </div>
           ) : (
-            <div style={styles.card}>
-              <h3>User Profile</h3>
-              <p>Manage your account settings and preferences here.</p>
-            </div>
+            <div style={styles.profileContainer}>
+    {/* Profile Header/Avatar */}
+    <div style={styles.profileHeader}>
+      <div style={styles.avatar}>
+        {user.firstname?.charAt(0)}{user.lastname?.charAt(0)}
+      </div>
+      <div>
+        <h3 style={styles.profileName}>{user.firstname} {user.lastname}</h3>
+        <p style={styles.profileRole}>Standard User</p>
+      </div>
+    </div>
+
+    {/* Information Cards */}
+      <div style={styles.infoGrid}>
+        <div style={styles.infoCard}>
+          <span style={styles.infoLabel}>First Name</span>
+          <span style={styles.infoValue}>{user.firstname}</span>
+        </div>
+        <div style={styles.infoCard}>
+          <span style={styles.infoLabel}>Last Name</span>
+          <span style={styles.infoValue}>{user.lastname}</span>
+        </div>
+        <div style={styles.infoCard}>
+          <span style={styles.infoLabel}>Email Address</span>
+          <span style={styles.infoValue}>{user.email}</span>
+        </div>
+      </div>
+    </div>
           )}
         </section>
       </main>
@@ -143,5 +187,107 @@ const styles = {
     borderRadius: "12px",
     border: "1px solid #e5e7eb",
     boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-  }
+  },
+  profileContainer: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "24px",
+  },
+  profileHeader: {
+    display: "flex",
+    alignItems: "center",
+    gap: "20px",
+    padding: "24px",
+    backgroundColor: "#fff",
+    borderRadius: "12px",
+    border: "1px solid #e5e7eb",
+  },
+  avatar: {
+    width: "64px",
+    height: "64px",
+    borderRadius: "50%",
+    backgroundColor: "#000",
+    color: "#fff",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "20px",
+    fontWeight: "700",
+  },
+  profileName: {
+    margin: 0,
+    fontSize: "18px",
+    fontWeight: "700",
+  },
+  profileRole: {
+    margin: 0,
+    fontSize: "14px",
+    color: "#6b7280",
+  },
+  infoGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+    gap: "16px",
+  },
+  infoCard: {
+    backgroundColor: "#fff",
+    padding: "16px 20px",
+    borderRadius: "12px",
+    border: "1px solid #e5e7eb",
+    display: "flex",
+    flexDirection: "column",
+    gap: "4px",
+  },
+  infoLabel: {
+    fontSize: "12px",
+    color: "#9ca3af",
+    textTransform: "uppercase",
+    fontWeight: "600",
+    letterSpacing: "0.5px",
+  },
+  infoValue: {
+    fontSize: "15px",
+    fontWeight: "500",
+    color: "#111827",
+  },
+  unauthorizedContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
+    backgroundColor: "#f9fafb",
+  },
+  unauthorizedCard: {
+    textAlign: "center",
+    padding: "40px",
+    backgroundColor: "#fff",
+    borderRadius: "16px",
+    border: "1px solid #e5e7eb",
+    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+    maxWidth: "400px",
+    width: "90%",
+  },
+  unauthorizedTitle: {
+    fontSize: "24px",
+    fontWeight: "700",
+    color: "#111827",
+    margin: "0 0 8px 0",
+  },
+  unauthorizedText: {
+    fontSize: "14px",
+    color: "#6b7280",
+    marginBottom: "24px",
+    lineHeight: "1.5",
+  },
+  unauthorizedButton: {
+    padding: "12px 24px",
+    backgroundColor: "#000",
+    color: "#fff",
+    border: "none",
+    borderRadius: "8px",
+    fontSize: "14px",
+    fontWeight: "600",
+    cursor: "pointer",
+    transition: "background-color 0.2s",
+  },
 };
