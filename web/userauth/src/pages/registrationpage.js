@@ -33,7 +33,7 @@ export default function RegistrationPage() {
     }
 
     try {
-      const response = await axios.post("http://localhost:8081/api/user/auth/register", formData);
+      const response = await axios.post("http://localhost:8081/api/auth/register", formData);
       alert("Registration Successful!");
       navigate("/");
       console.log(response);
