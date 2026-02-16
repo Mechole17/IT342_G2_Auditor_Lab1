@@ -1,16 +1,24 @@
-import { useState } from "react";
+import { useState, useContext } from "react"; // Added useContext
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../pages/UserContext"; // Ensure this path is correct
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
+  
+  // Consume the user data and logout function from context
+  const { user, logout } = useContext(UserContext);
 
   const handleLogout = () => {
-    // 1. Clear local storage/session (if you have tokens)
-    localStorage.removeItem("token");
-    // 2. Redirect to landing page
+    // Call the global logout from context
+    logout();
     navigate("/");
   };
+
+  // Prevent rendering if user data hasn't loaded yet
+  if (!user) {
+    return <div style={styles.container}>Loading profile...</div>;
+  }
 
   return (
     <div style={styles.container}>
@@ -49,13 +57,17 @@ export default function Dashboard() {
         <section style={styles.contentBody}>
           {activeTab === "overview" ? (
             <div style={styles.card}>
-              <h3>Welcome back!</h3>
+              <h3>Welcome back, {user.firstName}!</h3> {/* Dynamic Name */}
               <p>Here is an overview of your recent audit activities.</p>
             </div>
           ) : (
             <div style={styles.card}>
               <h3>User Profile</h3>
-              <p>Manage your account settings and preferences here.</p>
+              <div style={styles.profileInfo}>
+                <p><strong>First Name:</strong> {user.firstName}</p> {/* Dynamic Data */}
+                <p><strong>Last Name:</strong> {user.lastName}</p>
+                <p><strong>Email:</strong> {user.email}</p>
+              </div>
             </div>
           )}
         </section>
@@ -65,6 +77,7 @@ export default function Dashboard() {
 }
 
 const styles = {
+  // ... Keep all your existing styles
   container: {
     display: "flex",
     height: "100vh",
@@ -143,5 +156,11 @@ const styles = {
     borderRadius: "12px",
     border: "1px solid #e5e7eb",
     boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+  },
+  // Added a small style for the profile layout
+  profileInfo: {
+    marginTop: "12px",
+    lineHeight: "2",
+    fontSize: "16px"
   }
 };

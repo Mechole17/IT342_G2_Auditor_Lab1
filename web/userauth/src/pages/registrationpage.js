@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function RegistrationPage() {
@@ -10,6 +10,8 @@ export default function RegistrationPage() {
     password: "",
     confirmPassword: ""
   });
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,6 +36,7 @@ export default function RegistrationPage() {
     try {
       const response = await axios.post("http://localhost:8081/api/user/auth/register", formData);
       alert("Registration Successful!");
+      navigate("/");
       console.log(response);
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.response?.data?.error || "Email already used.";

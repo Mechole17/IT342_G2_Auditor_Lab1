@@ -1,27 +1,31 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { UserContext } from "../pages/UserContext";
 
 export default function LandingPage() {
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
+  const { login } = useContext(UserContext);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setLoginData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleLogin = async (e) => {
+  // web/userauth/src/pages/landingpage.js
+
+const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      // Replace with your actual login endpoint
-      //const response = await axios.post("http://localhost:8081/api/user/auth/login", loginData);
-      navigate("/dashboard");
-      alert("Welcome back!");
-      //console.log(response.data);
+      const response = await axios.post("http://localhost:8080/api/user/auth/login", loginData, { withCredentials: true });
+      if (response.status === 200) {
+        // The backend should return the User object (firstName, lastName, email)
+        login(response.data); 
+        navigate("/dashboard");
+      }
     } catch (error) {
-      //const msg = error.response?.data?.message || "Invalid credentials.";
-      alert("error");//placeholder for now
+      alert("Login failed.");
     }
   };
 
