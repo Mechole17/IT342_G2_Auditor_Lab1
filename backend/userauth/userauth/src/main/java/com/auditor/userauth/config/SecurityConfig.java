@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -18,14 +19,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // 1. Enable CORS and link it to the bean below
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                // 2. Disable CSRF (Common for REST APIs using JWT/stateless auth)
-                .csrf(csrf -> csrf.disable())
-                // 3. Allow all requests to your auth endpoints
+                .csrf(csrf -> csrf.disable()) // Note: Enabling CSRF is recommended for sessions
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/user/auth/**").permitAll()
                         .anyRequest().authenticated()
+                )
+                // Enable session management
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 );
 
         return http.build();

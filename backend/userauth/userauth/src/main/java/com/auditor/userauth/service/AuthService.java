@@ -28,4 +28,10 @@ public class AuthService {
         user.setPassword(encodedPassword);
         return userRepository.save(user);
     }
+
+    public boolean login(String email, String rawPassword) {
+        return userRepository.findByEmail(email)
+                .map(user -> passwordEncoder.matches(rawPassword, user.getPassword()))
+                .orElse(false);
+    }
 }
