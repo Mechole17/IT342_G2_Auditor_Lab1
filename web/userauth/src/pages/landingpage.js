@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { AuthContext } from "../context/AuthContext";
 
 export default function LandingPage() {
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -13,15 +15,21 @@ export default function LandingPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
     try {
-      // Replace with your actual login endpoint
-      //const response = await axios.post("http://localhost:8081/api/user/auth/login", loginData);
-      navigate("/dashboard");
-      alert("Welcome back!");
-      //console.log(response.data);
+      // Use the same port/URL pattern as your registration
+      const response = await axios.post("http://localhost:8081/api/user/auth/login", loginData);
+      
+      // 1. Save the user to LocalStorage using authcontext login function
+      login(response.data); 
+      alert("Login Successful!");
+      navigate("/dashboard"); // Or wherever your main page is
     } catch (error) {
-      //const msg = error.response?.data?.message || "Invalid credentials.";
-      alert("error");//placeholder for now
+      const errorMessage = error.response?.data?.message || "Invalid email or password.";
+      alert(errorMessage);
+      
+      // Clear password on failure
+      setLoginData(prev => ({ ...prev, password: "" }));
     }
   };
 
