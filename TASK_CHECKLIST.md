@@ -1,12 +1,13 @@
 ## TASK CHECKLIST
     #Done
-    -Register
-    -Login
-    -Logout
-    -Dashboard/Profile
+    -Register (Backend, frontend)
+    -Login (Backend, frontend)
+    -Logout (frontend)
+    -Dashboard/Profile (backend, frontend)
+    -Docs (updated diagram)
 
     #In-progress
-
+    Mobile
 
     #TODO
     
