@@ -1,12 +1,25 @@
 ## TASK CHECKLIST
     #Done
     -Register
+        -backend: 0204d7c
+        -frontend: 4b608ec
     -Login
+        -backend: 0204d7c
+        -frontend: 4b608ec
     -Logout
-    -Dashboard/Profile
+        -frontend: 4b608ec
+    -Dashboard
+        -backend: 0204d7c
+        -frontend: 4b608ec
+    -Profile
+        -backend: d32046d
+        -frontend: c0b7be3
+
+
+
 
     #In-progress
-
+    Mobile
 
     #TODO
     
